@@ -228,8 +228,9 @@ class UserManager(TwitterManager):
             user._followers_ids = []
             # user.followers.clear() # this make m2m_history record with count 0 - so its wrong
             cursor = tweepy.Cursor(user.tweepy._api.followers, id=user.pk, count=count)
+            extra_fields = {'fetched': timezone.now()}
             for instance in cursor.items():
-                instance = self.parse_response_object(instance)
+                instance = self.parse_response_object(instance, extra_fields)
                 instance = self.get_or_create_from_instance(instance)
                 # TODO: NOT USE .add method for users, because of ManyToManyHistoryField
                 # TODO: handle first version in right way - empty time_from field.
